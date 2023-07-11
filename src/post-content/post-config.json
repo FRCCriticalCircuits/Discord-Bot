@@ -1,0 +1,21 @@
+{
+    "github": {
+        "events": [
+            "repository",
+            "fork",
+            "create",
+            "delete"
+        ],
+        "actions": [
+            "created",
+            "deleted",
+            "edited",
+            "opened",
+            "released",
+            "renamed"
+        ]
+    },
+    "youtube": {
+
+    }
+}
