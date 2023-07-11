@@ -43,23 +43,24 @@ module.exports = (client) => {
                     `[${webhookEvent.body.repository.full_name}] Repository has been ${webhookEvent.body.action} by ${webhookEvent.body.sender.login}`)
                   .setColor('DarkPurple').setURL(webhookEvent.body.repository.html_url);
                 
-                if(webhookEvent.body.action === "created" && webhookEvent.body.description){
-                  postEmbed.setDescription(webhookEvent.body.description);
+                if(webhookEvent.body.action === "created" && webhookEvent.body.repository.description !== ''){
+                  postEmbed.setDescription(`${webhookEvent.body.repository.description}`);
                 }
 
                 if(!webhookEvent.body.action === "deleted"){
                   postEmbed.setURL(webhookEvent.body.repository.html_url);
                 }
+
               }
 
               if(webhookEvent["x-github-event"] === "create") {
                 if(webhookEvent.body.ref_type === "tag") {
                   postEmbed.setTitle(
-                    `[${webhookEvent.body.master_branch}] tag has been created by ${webhookEvent.body.sender.login}`
+                    `[${webhookEvent.body.repository.name}:${webhookEvent.body.ref}] tag has been created by ${webhookEvent.body.sender.login}`
                   ).setURL(webhookEvent.body.repository.html_url).setColor('Gold');
                 } else if( webhookEvent.body.ref_type === "branch" ) {
                   postEmbed.setTitle(
-                    `[${webhookEvent.body.repository.full_name}] branch has been created by ${webhookEvent.body.sender.login}`
+                    `[${webhookEvent.body.repository.name}:${webhookEvent.body.ref}] branch has been created by ${webhookEvent.body.sender.login}`
                   ).setURL(webhookEvent.body.repository.html_url).setColor('DarkGold');
                 }
               }
