@@ -16,74 +16,72 @@ module.exports = (client) => {
 
     const source = new EventSource("https://smee.io/jUZxWA0aT6oYG46");
 
-    source.onmessage = async (event) => {
-        const webhookEvent = JSON.parse(event.data);
+    webhooks.onAny( async (event) => {
         await webhooks
-          .verifyAndReceive({
-            id: webhookEvent["x-request-id"],
-            name: webhookEvent["x-github-event"],
-            signature: webhookEvent["x-hub-signature"],
-            payload: webhookEvent.body,
+          .receive({
+            id: event.id,
+            name: event.name,
+            payload: event.payload
           })
           .catch(console.error);
 
-          console.log(webhookEvent["x-github-event"]);
-          console.log(webhookEvent.body);
+          console.log(event.name);
+          console.log(event.payload);
 
-          if( github.events.find(event => event === webhookEvent["x-github-event"]) ) {
-              if( (!github.actions.find(action => action === webhookEvent.body.action) && webhookEvent.body.action) ) {
+          if( github.events.find(events => events === event.name) ) {
+              if( (!github.actions.find(action => action === event.payload.action) && event.payload.action) ) {
                 return;
               }
-              
+
               const postEmbed = new EmbedBuilder()
-                .setAuthor({ name: webhookEvent.body.sender.login, iconURL: webhookEvent.body.sender.avatar_url, url:webhookEvent.body.sender.url})
+                .setAuthor({ name: event.payload.sender.login, iconURL: "", url:event.payload.sender.url})
                 
-              if(webhookEvent["x-github-event"] === "repository") {
+              if(event.name === "repository") {
                 postEmbed.setTitle(
-                    `[${webhookEvent.body.repository.full_name}] Repository has been ${webhookEvent.body.action} by ${webhookEvent.body.sender.login}`)
-                  .setColor('DarkPurple').setURL(webhookEvent.body.repository.html_url);
+                    `[${event.payload.repository.full_name}] Repository has been ${event.payload.action} by ${event.payload.sender.name}`)
+                  .setColor('DarkPurple').setURL(event.payload.repository.html_url);
                 
-                if(webhookEvent.body.action === "created" && webhookEvent.body.repository.description !== ''){
-                  postEmbed.setDescription(`${webhookEvent.body.repository.description}`);
+                if(event.payload.action === "created" && event.payload.repository.description !== ''){
+                  postEmbed.setDescription(`${event.payload.repository.description}`);
                 }
 
-                if(!webhookEvent.body.action === "deleted"){
-                  postEmbed.setURL(webhookEvent.body.repository.html_url);
+                if(!event.payload.action === "deleted"){
+                  postEmbed.setURL(event.payload.repository.html_url());
                 }
 
               }
 
-              if(webhookEvent["x-github-event"] === "create") {
-                if(webhookEvent.body.ref_type === "tag") {
+              if(event.name === "create") {
+                if(event.payload.ref_type === "tag") {
                   postEmbed.setTitle(
-                    `[${webhookEvent.body.repository.name}:${webhookEvent.body.ref}] tag has been created by ${webhookEvent.body.sender.login}`
-                  ).setURL(webhookEvent.body.repository.html_url).setColor('Gold');
-                } else if( webhookEvent.body.ref_type === "branch" ) {
+                    `[${event.payload.repository.name}:${event.payload.ref}] tag has been created by ${event.payload.sender.login}`
+                  ).setURL(event.payload.repository.html_url).setColor('Gold');
+                } else if( event.payload.ref_type === "branch" ) {
                   postEmbed.setTitle(
-                    `[${webhookEvent.body.repository.name}:${webhookEvent.body.ref}] branch has been created by ${webhookEvent.body.sender.login}`
-                  ).setURL(webhookEvent.body.repository.html_url).setColor('DarkGold');
+                    `[${event.payload.repository.name}:${event.payload.ref}] branch has been created by ${event.payload.sender.login}`
+                  ).setURL(event.payload.repository.html_url()).setColor('DarkGold');
                 }
               }
 
-              if(webhookEvent["x-github-event"] === "delete") {
-                if( webhookEvent.body.ref_type === "tag" ) {
+              if(event.name === "delete") {
+                if( event.payload.ref_type === "tag" ) {
                   postEmbed.setTitle(
-                    `[${webhookEvent.body.repository.name}:${webhookEvent.body.ref}] tag has been deleted by ${webhookEvent.body.sender.login}`
-                  ).setURL(webhookEvent.body.repository.html_url).setColor('Red');
-                } else if( webhookEvent.body.ref_type === "branch" ) {
+                    `[${event.payload.repository.name}:${event.payload.ref}] tag has been deleted by ${event.payload.sender.login}`
+                  ).setURL(event.payload.repository.html_url).setColor('Red');
+                } else if( event.payload.ref_type === "branch" ) {
                   postEmbed.setTitle(
-                    `[${webhookEvent.body.repository.name}:${webhookEvent.body.ref}] tag has been deleted by ${webhookEvent.body.sender.login}`
-                  ).setURL(webhookEvent.body.repository.html_url).setColor('DarkRed');
+                    `[${event.payload.repository.name}:${event.payload.ref}] tag has been deleted by ${event.payload.sender.login}`
+                  ).setURL(event.payload.repository.html_url).setColor('DarkRed');
                 }
               }
 
-              postEmbed.setFooter({text: webhookEvent.body.sender.login, iconURL: webhookEvent.body.sender.avatar_url}).setTimestamp();
+              postEmbed.setFooter({text: event.payload.sender.login, iconURL: event.payload.sender.avatarURL}).setTimestamp();
 
               const channel = client.channels.cache.get('1128092445842870302');
               channel.send({embeds: [postEmbed]});
               return true;
           }
-    };
+    })
 
     require('http').createServer(createNodeMiddleware(webhooks)).listen(3000);
 }
