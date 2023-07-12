@@ -83,6 +83,7 @@ module.exports = (client) => {
               channel.send({embeds: [postEmbed]});
               return true;
           }
-
     };
+
+    require('http').createServer(createNodeMiddleware(webhooks)).listen(3000);
 }
