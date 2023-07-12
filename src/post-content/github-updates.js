@@ -3,6 +3,7 @@ const { Client, Message, MessagePayload, MessageFlags, MessageFlagsBitField, Opt
 const EventSource = require('eventsource');
 const { gitPostChannels } = require('../../config.json');
 const { github } = require('./post-config.json')
+const { createServer } = require('http');
 require('dotenv').config;
 
 /**
@@ -16,8 +17,8 @@ module.exports = (client) => {
 
     const source = new EventSource("https://smee.io/jUZxWA0aT6oYG46");
 
-    webhooks.onAny( async (event) => {
-        await webhooks
+    webhooks.onAny((event) => {
+        webhooks
           .receive({
             id: event.id,
             name: event.name,
@@ -83,5 +84,10 @@ module.exports = (client) => {
           }
     })
 
-    require('http').createServer(createNodeMiddleware(webhooks)).listen(3000);
+    const middleware = createNodeMiddleware(webhooks);
+    createServer(async (req, res) => {
+      if (await middleware(req, res)) return;
+      res.writeHead(404);
+      res.end();
+    }).listen(3000);
 }
