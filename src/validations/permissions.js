@@ -6,14 +6,16 @@ const { CommandInteraction, PermissionFlagsBits } = require('discord.js');
  * @param {*} commandObj 
  */
 module.exports = (interaction, commandObj) => {
-    if( commandObj.permissionsRequired || commandObj.botPermissions ) {
+    if( commandObj.permissionsRequired ) {
         for( const permission of commandObj.permissionsRequired ) {
             if( !interaction.memberPermissions.has(permission) ) {
                 interaction.reply({content:'You do not have the required permissions', ephemeral: true});
                 return true;
             }
         }
-
+    }
+        
+    if( commandObj.botPermissions ){
         for ( const botPermission of commandObj.botPermissions ) {
             if(!interaction.appPermissions.has(botPermission)) {
                 interaction.reply({ content:'I do not have the required permissions', ephemeral:true});
