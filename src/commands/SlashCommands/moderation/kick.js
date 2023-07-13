@@ -19,23 +19,34 @@ module.exports = {
             }
         ],
     },
-    testOnly: true,
+    testOnly: false,
     permissionsRequired: [ PermissionFlagsBits.Administrator ],
     botPermissions: [ PermissionFlagsBits.Administrator ],
+    /**
+     * 
+     * @param {CommandInteraction} interaction 
+     */
     run: async ({interaction}) => {
-        const userID = interaction.options.get('user').value;
-    
         await interaction.deferReply();
+        const user = interaction.guild.members.cache.get(interaction.options.get('user').value);
 
-        if(!userID) {
-            interaction.reply({ content:'This user is not a member of this server', ephemeral:true });
+        const deleteReply = setTimeout(() => {
+                interaction.deleteReply();
+            }, 5000 // Delete the reply after 10 seconds
+        );
+
+        if(!user.id) {
+            interaction.editReply('This user is not a member of this server');
+            deleteReply;
             return true;
-        }else if( interaction.options.getMember(userID).permissions.has(PermissionFlagsBits.Administrator) ) {
-            interaction.reply({ content:'This user cannot be kicked because they are an administrator', ephemeral: true });
+        } else if(user.permissions.has(PermissionFlagsBits.Administrator)) {
+            interaction.editReply(`You cannot ban this user because they are an administrator`);
+            deleteReply;
             return true;
         }
 
-        interaction.reply(`User <@${userID}> has been kicked for ${interaction.options.get('reason').value} `);
-        interaction.options.getMember('user').kick();
+        await user.ban();
+        interaction.editReply(`<@${user.id}> has been kicked for ${interaction.options.get('reason').value} `);
+        deleteReply;
     }
 }

@@ -19,7 +19,7 @@ module.exports = {
             }
         ],
     },
-    testOnly: true,
+    testOnly: false,
     permissionsRequired: [ PermissionFlagsBits.Administrator ],
     botPermissions: [ PermissionFlagsBits.Administrator ],
     /**
@@ -27,20 +27,27 @@ module.exports = {
      * @param {CommandInteraction} interaction
      * @param { Client } client
      */
-    run: async ( client ,interaction) => {
-        const userID = interaction.options.get('user').value;
-    
+    run: async ({interaction}) => {    
         await interaction.deferReply();
+        const user = interaction.guild.members.cache.get(interaction.options.get('user').value);
 
-        if(!userID) {
-            interaction.reply({ content:'This user is not a member of this server', ephemeral:true });
+        const deleteReply = setTimeout(() => {
+                interaction.deleteReply();
+            }, 5000 // Delete the reply after 10 seconds
+        );
+
+        if(!user.id) {
+            interaction.editReply('This user is not a member of this server');
+            deleteReply;
             return true;
-        }else if( interaction.options.getMember(userID).permissions.has(PermissionFlagsBits.Administrator) ) {
-            interaction.reply({ content:'This user cannot be banned because they are an administrator', ephemeral: true });
+        } else if(user.permissions.has(PermissionFlagsBits.Administrator)) {
+            interaction.editReply(`You cannot ban this user because they are an administrator`);
+            deleteReply;
             return true;
         }
 
-        interaction.reply(`<@${userID}> has been banned for ${interaction.options.get('reason').value} `);
-        interaction.options.getMember('user').ban();
+        user.ban();
+        interaction.editReply(`<@${user.id}> has been banned for ${interaction.options.get('reason').value}`);
+        deleteReply;
     }
 }
