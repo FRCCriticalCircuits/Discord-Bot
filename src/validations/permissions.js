@@ -9,7 +9,7 @@ module.exports = (interaction, commandObj) => {
     if( commandObj.permissionsRequired ) {
         for( const permission of commandObj.permissionsRequired ) {
             if( !interaction.memberPermissions.has(permission) ) {
-                interaction.reply({content:'You do not have the required permissions', ephemeral: true});
+                interaction.reply({content:'You do not have the required permissions to this command', ephemeral: true});
                 return true;
             }
         }
@@ -18,7 +18,7 @@ module.exports = (interaction, commandObj) => {
     if( commandObj.botPermissions ){
         for ( const botPermission of commandObj.botPermissions ) {
             if(!interaction.appPermissions.has(botPermission)) {
-                interaction.reply({ content:'I do not have the required permissions', ephemeral:true});
+                interaction.reply({ content:'I do not have the required permissions to run this command', ephemeral:true});
                 return true;
             }
         }
