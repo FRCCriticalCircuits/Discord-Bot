@@ -2,6 +2,7 @@
     "devs": [],
     "postChannels": [],
     "testServer": "1125145310977597470",
-    "gitPostChannels": ["1125145597062684732","1128092445842870302"],
-    "youtubePostChannels": []
+    "gitPostChannel": "1128092445842870302",
+    "youtubePostChannels": [],
+    "db_string_uri": "mongodb+srv://discordcluster.g6emwqd.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
 }
