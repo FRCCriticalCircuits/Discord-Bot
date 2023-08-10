@@ -1,2 +1,5 @@
 /node_modules
 .env
+Dockerfile
+X509-cert-1866892354832168643.pem
+config.json
