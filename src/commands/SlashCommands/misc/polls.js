@@ -6,9 +6,10 @@ const { MongoClient, Timestamp } = require('mongodb');
 const { db_string_uri } = require('../../../../config.json');
 const { error } = require('node:console');
 
-const certificatePath = path.join(__dirname, '..', '..', '..', '..', 'X509-cert-1866892354832168643.pem');
+const certificatePath = path.join(__dirname, '..', '..', '..', '..', process.env.MONGO_CERT_PATH_NAME);
 
-const dbClient = new MongoClient(db_string_uri, {
+const dbClient = new MongoClient(
+    db_string_uri, {
     tlsCertificateKeyFile: certificatePath,
 });
 
@@ -20,7 +21,8 @@ module.exports = {
      * @param {CommandInteraction | ButtonInteraction} interaction 
      * @param {Client} client 
      */
-    run: async ({interaction}) => {
+    //run: async (interaction, client) => {
+    run: async ({interaction, client}) => {
         const channel = interaction.guild.channels.cache.get(interaction.channelId);
         const row = new ActionRowBuilder();
         const polls = dbDiscord.collection('Polls');
@@ -245,10 +247,10 @@ module.exports = {
                         )
 
                         const updatedEmbed = new EmbedBuilder()
-                                        .setAuthor({name: `${interaction.member.nickname ?? interaction.member.displayName}`, iconURL: interaction.member.displayAvatarURL()})
+                                        .setAuthor({name: `${interaction.client.user.username}`, iconURL: interaction.client.user.displayAvatarURL()})
                                         .setTitle(`Poll`)
                                         .setColor('Yellow')
-                                        .setFooter({text:`${interaction.member.nickname ?? interaction.member.displayName}`, iconURL: interaction.member.displayAvatarURL()}).setTimestamp();
+                                        .setFooter({text:`${interaction.client.user.username}`, iconURL: interaction.client.user.displayAvatarURL()}).setTimestamp();
 
                         try{
                             
