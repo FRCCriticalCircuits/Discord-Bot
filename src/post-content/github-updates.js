@@ -25,6 +25,7 @@ module.exports = (client) => {
       return `sha256=${signiture}` === req.header("x-hub-signature-256")
     }
 
+    app.route('/github')
     app.post("/github", async (req, res) => {
       const webhookEvent = await req.body;
 
@@ -83,7 +84,6 @@ module.exports = (client) => {
           const channel = client.channels.cache.get(gitPostChannel);
           channel.send({embeds: [postEmbed]});
         }
-        res.status(200).send("Payload Recieved");
 
       }else {
         res.status(401).send("Unauthorized");
@@ -91,5 +91,4 @@ module.exports = (client) => {
   });
 
   app.listen(process.env.PORT, () => console.log(`Server is running at port 3000`));
-
 }

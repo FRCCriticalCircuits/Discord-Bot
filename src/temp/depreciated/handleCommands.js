@@ -1,5 +1,5 @@
-const { devs } = require('../../config.json');
-const getLocalCommands = require('./util/getLocalCommands');
+const { devs } = require('../../../config.json');
+const getLocalCommands = require('../util/getLocalCommands');
 
 module.exports = async (client, interaction) => {
     if(!interaction.isChatInputCommand()) return;

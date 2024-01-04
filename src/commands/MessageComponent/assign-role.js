@@ -1,5 +1,5 @@
 const { ButtonInteraction, Client, InteractionResponse } = require("discord.js");
-const roles = require('./roles.json');
+const roles = require('../JSONS/roles.json');
 
 /**
  * 

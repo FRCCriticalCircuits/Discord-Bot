@@ -1,5 +1,5 @@
 const path = require('node:path');
-const getAllfiles = require('./util/getAllFiles');
+const getAllfiles = require('../util/getAllFiles');
 const { Events } = require('discord.js');
 
 module.exports = (client) => {
