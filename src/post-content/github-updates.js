@@ -3,6 +3,9 @@ const { Client, Message, MessagePayload, MessageFlags, MessageFlagsBitField, Opt
 const { github } = require('./post-config.json');
 const { gitPostChannel } = require('./../../config.json');
 const crypto = require('crypto');
+const { env } = require('process');
+var http = require('http')
+var https = require('https')
 require('dotenv').config;
 
 /**
@@ -90,5 +93,8 @@ module.exports = (client) => {
       }
   });
 
-  app.listen(process.env.PORT, () => console.log(`Server is running at port 3000`));
+  http.createServer(app).listen(80)
+  https.createServer({}, app).listen(443)
+  //app.listen(process.env.PORT, () => console.log(`Server is running at port ${process.env.PORT}`));
+  console.log(`Now Listening on port 80 and 443`)
 }
