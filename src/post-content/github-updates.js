@@ -5,7 +5,6 @@ const { gitPostChannel } = require('./../../config.json');
 const crypto = require('crypto');
 const { env } = require('process');
 var http = require('http')
-var https = require('https')
 require('dotenv').config;
 
 /**
@@ -85,16 +84,15 @@ module.exports = (client) => {
           const channel = client.channels.cache.get(gitPostChannel);
           channel.send({embeds: [postEmbed]});
 
-          res.status(200).send("Recieved")
+          res.status(200).send("Recieved and Accepted")
+        }else{
+          res.status(203).send("Receveid | Data was not used")
         }
-
       }else {
         res.status(401).send("Unauthorized");
       }
   });
 
-  http.createServer(app).listen(80)
-  https.createServer({}, app).listen(443)
-  //app.listen(process.env.PORT, () => console.log(`Server is running at port ${process.env.PORT}`));
+  app.listen(process.env.PORT, () => console.log(`Server is running at port ${process.env.PORT}`));
   console.log(`Now Listening on port 80 and 443`)
 }
