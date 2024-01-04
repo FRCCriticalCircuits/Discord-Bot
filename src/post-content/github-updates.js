@@ -28,11 +28,9 @@ module.exports = (client) => {
       return `sha256=${signiture}` === req.header("x-hub-signature-256")
     }
 
-    app.route('/github')
-    app.post("/github", async (req, res) => {
+    app.post("/", async (req, res) => {
       const webhookEvent = await req.body;
-
-      //console.log(await req.body);
+      console.log(webhookEvent);
 
       //console.log(req.header("x-github-event"));
       //console.log(webhookEvent.repository.full_name);
@@ -86,6 +84,8 @@ module.exports = (client) => {
 
           const channel = client.channels.cache.get(gitPostChannel);
           channel.send({embeds: [postEmbed]});
+
+          res.status(200).send("Recieved")
         }
 
       }else {
