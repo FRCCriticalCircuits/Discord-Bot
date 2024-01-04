@@ -1,4 +1,4 @@
-const { Client, CommandInteraction, ButtonInteraction, SlashCommandBuilder, SlashCommandSubcommandGroupBuilder, SlashCommandSubcommandBuilder, SlashCommandStringOption, PermissionFlagsBits, Collector, Guild, EmbedBuilder, ActionRow, ActionRowBuilder, ButtonBuilder, InteractionResponse, Message, MessageManager, MessagePayload, ApplicationCommandOptionType, ButtonStyle, MessageCollector, codeBlock } = require('discord.js');
+const { Client, CommandInteraction, ButtonInteraction, SlashCommandBuilder, SlashCommandSubcommandGroupBuilder, SlashCommandSubcommandBuilder, SlashCommandStringOption, PermissionFlagsBits, Collector, Guild, EmbedBuilder, ActionRow, ActionRowBuilder, ButtonBuilder, InteractionResponse, Message, MessageManager, MessagePayload, ApplicationCommandOptionType, ButtonStyle, MessageCollector, codeBlock, inlineCode } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
 const pollsData = require('../../JSONS/pollsData.json');
@@ -112,7 +112,7 @@ module.exports = {
                     )
                     */
                 }else {
-                    await interaction.editReply({content:`There is an ongoing poll in current channel, To end the poll use the following command, ${codeBlock(`/poll end`)}`, ephemeral: true});
+                    await interaction.editReply({content:`There is an ongoing poll in current channel, To end the poll use the following command, ${inlineCode(`/poll end`)}`, ephemeral: true});
                     return;
                 }
 
@@ -123,7 +123,7 @@ module.exports = {
                 )
 
                 if( !poll ) {
-                    await interaction.reply({content:`There is no active poll on this channel, you can use the ${codeBlock('/poll create')} command to start a new poll`, ephemeral: true});
+                    await interaction.reply({content:`There is no active poll on this channel, you can use the ${inlineCode('/poll create')} command to start a new poll`, ephemeral: true});
                     return;
                 }
 
@@ -187,7 +187,7 @@ module.exports = {
                     );
 
                     if( !poll ) {
-                        interaction.editReply(`There is no active poll on this channel, you can use the following command to start a new poll, ${codeBlock(`/poll create`)}`);
+                        interaction.editReply(`There is no active poll on this channel, you can use the following command to start a new poll, ${inlineCode(`/poll create`)}`);
                         return;
                     }
 
@@ -359,8 +359,6 @@ module.exports = {
                     .setName('results')
                     .setDescription('Shows current vote information in poll')
             ),
-    testOnly: true,
-    devsOnly: true,
-    PermissionsRequired: [PermissionFlagsBits.Administrator],
-    role: '1079941144466694225',
+    testOnly: false,
+    devsOnly: false,
 }
