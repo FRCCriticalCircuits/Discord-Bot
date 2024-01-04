@@ -25,6 +25,7 @@ client.on('ready', async () => {
 
         console.log(`Message has been sent`);
         channel.send({ content: `Select a role to assign or unassign yourself a role`, components: [actionRow] });
+        process.exit(0);
     } catch (error) {
         console.log(`[ERROR] There was an error: ${error}`);
         interaction.reply({content:`There was an error while trying execute command`, ephemeral: true});
